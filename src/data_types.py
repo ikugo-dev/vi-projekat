@@ -17,8 +17,7 @@ class Point:
     z: int
 
 class Node:
-    def __init__(self, point):
-        self.point = point
+    def __init__(self):
         self.neighbours: list[Node] = []
         self.symbol = randomSymbol()
 

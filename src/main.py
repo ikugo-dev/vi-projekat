@@ -11,17 +11,16 @@ HEX_DIRECTIONS = [
 ]
 
 def build_graph(points: list[Point]) -> dict[Point, Node]:
-    nodes = {p: Node(p) for p in points}
+    nodes = {point: Node() for point in points}
     for point, node in nodes.items():
-        for d in HEX_DIRECTIONS:
+        for dir in HEX_DIRECTIONS:
             neighbor_point = Point(
-                point.x + d.x,
-                point.y + d.y,
-                point.z + d.z
+                point.x + dir.x,
+                point.y + dir.y,
+                point.z + dir.z
             )
             if neighbor_point in nodes:
                 node.neighbours.append(nodes[neighbor_point])
-
     return nodes
 
 def generate_hex_points(radius: int) -> list[Point]:
@@ -39,5 +38,5 @@ if __name__ == "__main__":
     hex_points = generate_hex_points(radius)
     graph = build_graph(hex_points)
 
-    printer.graph(graph)
-    printer.points(list(graph.keys()), radius)
+    printer.debug(graph)
+    printer.graph(graph, radius)
