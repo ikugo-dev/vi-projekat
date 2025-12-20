@@ -8,16 +8,16 @@ class Color(Enum):
     White = '\u26AA'
 
 def randomSymbol() -> str:
-    return choice(list(Color)).value
+    return Color.White.value
 
 @dataclass(frozen=True)
 class Point:
-    x: int
-    y: int
-    z: int
+    L: str  #letter
+    N: int  #number
 
 class Node:
     def __init__(self):
         self.neighbours: list[Node] = []
         self.symbol = randomSymbol()
+        self.point: Point = Point(L="X", N=0)
 
