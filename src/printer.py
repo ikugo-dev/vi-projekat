@@ -17,8 +17,10 @@ def graph(graph: dict[Point, Node], size: int) -> None:
     #Popuni tackicama
     for col in range(columns):
         letter = string.ascii_uppercase[col]
-        rng = range(1, size + col + 1)
-        if col >= size: rng = range(col - columns // 2 + 1, columns + 1)
+
+        #Raspon brojki u odnosu na deo table
+        if col < size: rng = range(1, size + col + 1)
+        else: rng = range(col - columns // 2 + 1, columns + 1)
 
         for number in rng:
             table_y = number * 2 + table_y_offset - col

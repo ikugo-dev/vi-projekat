@@ -66,22 +66,14 @@ if __name__ == "__main__":
     #printer.debug(graph)
     #printer.graph(graph, size)
 
-    turn = 1
-    player = Color.Green
+    for turn in range(1, 999):
+        if (turn % 2 == 1): player = Color.Green
+        else: player = Color.Red
 
-    while(True):
         print(f"Turn: {turn}")
         printer.graph(graph, size)
         print(f"Turn for {player.value}: ")
 
-        letter = input('Letter: ')
-        number = int(input('number: '))
-        node = graph[Point(L=letter, N=number)]
+        letter, number = input('Letter: ').split(" ")
+        node = graph[Point(L=letter, N=int(number))]
         node.symbol = player.value
-
-        if (player == Color.Green):
-            player = Color.Red
-        else:
-            player = Color.Green
-
-        turn += 1
