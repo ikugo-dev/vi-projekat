@@ -13,7 +13,7 @@ HEX_DIRECTIONS = [
     (1, 1)
 ]
 
-def build_grid(size: int) -> dict:
+def build_grid(size: int) -> dict[str, list]:
     grid = {string.ascii_uppercase[x] : []  for x in range(size*2-1)}
     low_end = 0
     high_end = size

@@ -1,0 +1,36 @@
+#Size 5
+  A  B  C  D  E  F  G  H  I
+
+              E1
+           D1    F2
+        C1    E2    G3
+     B1    D2    F3    H4
+1 A1    C2    E3    G4    I5
+     B2    D3    F4    H5
+2 A2    C3    E4    G5    I6
+     B3    D4    F5    H6
+3 A3    C4    E5    G6    I7
+     B4    D5    F6    H7
+4 A4    C5    E6    G7    I8
+     B5    D6    F7    H8
+5 A5    C6    E7    G8    I9
+     B6    D7    F8    H9
+        C7    E8    G9
+           D8    F9
+              E9            
+
+#Size 3
+
+  A  B  C  D  E  
+
+              
+           
+        C1    
+     B1    D2    
+1 A1    C2    E3    
+     B2    D3    
+2 A2    C3    E4    
+     B3    D4    
+3 A3    C4    E5    
+     B4    D5        
+        C5    

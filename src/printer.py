@@ -1,54 +1,35 @@
 import string
-import itertools as it
 from data_types import Point, Node
 
 
 def graph(graph: dict[Point, Node], size: int) -> None:
-    start = [(size*2-1)//2, 1]
-    table = []
-    row = []
+    table_matrix : list[list[str]] = [];
+    columns = size * 2 - 1
+    table_y_offset = size - 3
+    table_matrix_height = size * 4 - 3
 
-    for i in range((size-1)):
-        number = start[1]
-        for j in range(start[0] - i, start[0] + i+1, 2):
-            letter = string.ascii_uppercase[j]
-            row.append(graph[Point(L=letter, N=number )].symbol)
-            number+=1
-        table.append(row)
-        row=[]
+    #Popuni praznim
+    for row in range(table_matrix_height):
+        table_matrix.append([])
+        for col in range(columns):
+            table_matrix[-1].append('  ')
 
-    low  = 1
-    high = size+low
-    for j in range(low, high):
-        number = j
-        if (high-low) == size: l = 0
-        else: l = 1
-        for i in range(l, size*2-1, 2):
-            letter = string.ascii_uppercase[i]
-            row.append(graph[Point(L=letter, N=number)].symbol)
-            number+=1
-        table.append(row)
-        if l == 0: low+=1
-        else: high+=1
-        row = []
+    #Popuni tackicama
+    for col in range(columns):
+        letter = string.ascii_uppercase[col]
+        rng = range(1, size + col + 1)
+        if col >= size: rng = range(col - columns // 2 + 1, columns + 1)
 
-    start = [(size*2-1)//2, 6]
+        for number in rng:
+            table_y = number * 2 + table_y_offset - col
+            node = graph[Point(L = letter, N = number)]
+            table_matrix[table_y][col] = node.symbol
 
-    for i in range(size-2, -1, -1):
-        number = start[1]
-        for j in range(start[0] - i, start[0] + i+1, 2):
-            letter = string.ascii_uppercase[j]
-            row.append(graph[Point(L=letter, N=number)].symbol)
-            number+=1
-        start[1]+=1
-        table.append(row)
-
-        row=[]
-
-    for row in table:
-        outp = "".join(row)
-        print(outp.center(size, ' '))
-
+    #Printuj tablu
+    for row in range(table_matrix_height):
+        for col in range(columns):
+            print(table_matrix[row][col], end = " ")
+        print("")
 
 def debug(graph: dict[Point, Node]) -> None:
     for point, node in graph.items():
