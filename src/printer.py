@@ -6,14 +6,14 @@ def graph(graph: dict[Point, Node], size: int) -> None:
 
     islands : list[Color] = [ ]
 
-    for _ in range(size // 2):
-        islands.append(Color.Red)
+    for _ in range(size // 2): islands.append(Color.Red)
+    for _ in range(size // 2): islands.append(Color.Green)
 
-    for _ in range(size // 2):
-        islands.append(Color.Green)
+    columns = size * 2 - 1
+
+    ##########Tackice############
 
     table_matrix : list[list[str]] = [] 
-    columns = size * 2 - 1
     table_y_offset = size - 3
     table_matrix_height = size * 4 - 3
 
@@ -36,13 +36,9 @@ def graph(graph: dict[Point, Node], size: int) -> None:
             node = graph[Point(L = letter, N = number)]
             table_matrix[table_y][col] = node.symbol
 
-    #Printuj tablu
-    #for row in range(table_matrix_height):
-    #    for col in range(columns):
-    #        print(table_matrix[row][col], end = " ")
-    #    print("")
 
-    #Dodaj ostrva
+    ##########Ostrva############
+
     isl_columns = size * 2 + 2
     isl_table_matrix_height = size * 4 - 1
     isl_table_matrix : list[list[str]] = [] 
@@ -75,13 +71,9 @@ def graph(graph: dict[Point, Node], size: int) -> None:
 
         side_y, side_x = inc_side(side, side_y, side_x)
 
-    #Printuj ostrva
-    #for row in range(isl_table_matrix_height):
-    #    for col in range(isl_columns):
-    #        print(isl_table_matrix[row][col], end = " ")
-    #    print("")
 
-    #Legenda
+    ###########Legenda###########
+
     leg_columns = isl_columns + 2
     leg_table_matrix_height = size * 4 + 3
     leg_table_matrix : list[list[str]] = []
@@ -108,7 +100,7 @@ def graph(graph: dict[Point, Node], size: int) -> None:
 
     #Desni brojevi
     for num in range(size, columns + 1):
-        leg_table_matrix[num * 2 + table_y_offset + 2 - ( size * 2 - 1) ][leg_columns - 1] = f"{num} "
+        leg_table_matrix[num * 2 + table_y_offset + 2 - (size * 2 - 1)][leg_columns - 1] = f"{num} "
 
     #Printuj legendu
     for row in range(leg_table_matrix_height):
