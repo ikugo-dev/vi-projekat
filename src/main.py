@@ -74,6 +74,6 @@ if __name__ == "__main__":
         printer.graph(graph, size)
         print(f"Turn for {player.value}: ")
 
-        letter, number = input('Letter: ').split(" ")
+        letter, number = input('Field: ').split(" ")
         node = graph[Point(L=letter, N=int(number))]
         node.symbol = player.value
