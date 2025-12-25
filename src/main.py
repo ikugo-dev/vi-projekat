@@ -1,6 +1,6 @@
 import string
 
-from data_types import Point, Node, randomSymbol
+from data_types import Color, Point, Node
 import printer
 
 
@@ -13,25 +13,26 @@ HEX_DIRECTIONS = [
     (1, 1)
 ]
 
-def build_grid(size: int) -> dict[str, list]:
-    grid = {string.ascii_uppercase[x] : []  for x in range(size*2-1)}
+def build_grid(size: int) -> dict[str, list[int]]:
+    grid : dict[str, list[int]] = {string.ascii_uppercase[x] : []  for x in range(size*2-1)}
     low_end = 0
     high_end = size
 
     for x in range(size*2-1):
-        print(low_end, high_end)
+
+        #print(low_end, high_end)
         for y in range(low_end, high_end):
             grid[string.ascii_uppercase[y]].append(x+1)
         if x < size-1 : high_end += 1
         else: low_end += 1
 
-        print(grid)
+        #print(grid)
     return grid
 
 
 
 def build_graph(points: list[Point]) -> dict[Point, Node]:
-    nodes = {}
+    nodes : dict[Point, Node] = {}
     for point in points:
         nodes[point] = Node()
         nodes[point].point = point
@@ -46,13 +47,14 @@ def build_graph(points: list[Point]) -> dict[Point, Node]:
                 node.neighbours.append(nodes[neighbor_point])
     return nodes
 
-def generate_points(size: int, grid: dict) -> list[Point]:
-    points = []
+def generate_points(size: int, grid: dict[str, list[int]]) -> list[Point]:
+    points : list[Point] = []
     for x in range(size*2-1):
         letter = string.ascii_uppercase[x]
         for y in grid[letter]:
             points.append(Point(letter, y))
     return points
+
 
 
 if __name__ == "__main__":
@@ -61,5 +63,25 @@ if __name__ == "__main__":
     hex_points = generate_points(size, build_grid(size))
     graph = build_graph(hex_points)
 
-    printer.debug(graph)
-    printer.graph(graph, size)
+    #printer.debug(graph)
+    #printer.graph(graph, size)
+
+    turn = 1
+    player = Color.Green
+
+    while(True):
+        print(f"Turn: {turn}")
+        printer.graph(graph, size)
+        print(f"Turn for {player.value}: ")
+
+        letter = input('Letter: ')
+        number = int(input('number: '))
+        node = graph[Point(L=letter, N=number)]
+        node.symbol = player.value
+
+        if (player == Color.Green):
+            player = Color.Red
+        else:
+            player = Color.Green
+
+        turn += 1

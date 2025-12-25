@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from random import choice
+#from random import choice
 from enum import Enum
 
 class Color(Enum):
@@ -18,6 +18,6 @@ class Point:
 class Node:
     def __init__(self):
         self.neighbours: list[Node] = []
-        self.symbol = randomSymbol()
+        self.symbol: str = randomSymbol()
         self.point: Point = Point(L="X", N=0)
 
