@@ -1,9 +1,7 @@
 import string
 from data_types import Color, Point, Node
 
-
 def graph(graph: dict[Point, Node], size: int) -> None:
-
     islands : list[Color] = [ ]
 
     for _ in range(size // 2): islands.append(Color.Red)
@@ -33,7 +31,7 @@ def graph(graph: dict[Point, Node], size: int) -> None:
 
         for number in rng:
             table_y = number * 2 + table_y_offset - col
-            node = graph[Point(L = letter, N = number)]
+            node = graph[Point(letter, number)]
             table_matrix[table_y][col] = node.symbol
 
 
@@ -56,12 +54,13 @@ def graph(graph: dict[Point, Node], size: int) -> None:
     side_x = size ; side_y = -1
 
     def inc_side(side: int, side_y: int, side_x: int):
-        if   side == 0: side_y += 1; side_x += 1
-        elif side == 1: side_y += 2;
-        elif side == 2: side_y += 1; side_x -= 1
-        elif side == 3: side_y -= 1; side_x -= 1
-        elif side == 4: side_y -= 2;
-        elif side == 5: side_y -= 1; side_x += 1
+        match side:
+            case 0: side_y += 1; side_x += 1
+            case 1: side_y += 2;
+            case 2: side_y += 1; side_x -= 1
+            case 3: side_y -= 1; side_x -= 1
+            case 4: side_y -= 2;
+            case 5: side_y -= 1; side_x += 1
         return side_y, side_x
 
     for side in range(6):

@@ -12,12 +12,12 @@ def randomSymbol() -> str:
 
 @dataclass(frozen=True)
 class Point:
-    L: str  #letter
-    N: int  #number
+    letter: str
+    number: int
 
 class Node:
     def __init__(self):
         self.neighbours: list[Node] = []
         self.symbol: str = randomSymbol()
-        self.point: Point = Point(L="X", N=0)
+        self.point: Point = Point("X", 0)
 

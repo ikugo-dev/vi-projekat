@@ -1,105 +1,57 @@
-import string
-
-from numpy.f2py.auxfuncs import throw_error
-
 from data_types import Color, Point, Node
+from graph import create_starting_graph 
 import printer
-
-
-HEX_DIRECTIONS = [
-    (0, -1),
-    (0,  1),
-    (-1,  0),
-    (1,  0),
-    (-1,  -1),
-    (1, 1)
-]
-
-def build_grid(size: int) -> dict[str, list[int]]:
-    grid : dict[str, list[int]] = {string.ascii_uppercase[x] : []  for x in range(size*2-1)}
-    low_end = 0
-    high_end = size
-
-    for x in range(size*2-1):
-
-        #print(low_end, high_end)
-        for y in range(low_end, high_end):
-            grid[string.ascii_uppercase[y]].append(x+1)
-        if x < size-1 : high_end += 1
-        else: low_end += 1
-
-        #print(grid)
-    return grid
-
-
-
-def build_graph(points: list[Point]) -> dict[Point, Node]:
-    nodes : dict[Point, Node] = {}
-    for point in points:
-        nodes[point] = Node()
-        nodes[point].point = point
-
-    for point, node in nodes.items():
-        for dir in HEX_DIRECTIONS:
-            neighbor_point = Point(
-                string.ascii_uppercase[ord(point.L)- ord('A') + dir[0]],
-                point.N + dir[1]
-            )
-            if neighbor_point in points:
-                node.neighbours.append(nodes[neighbor_point])
-    return nodes
-
-def generate_points(size: int, grid: dict[str, list[int]]) -> list[Point]:
-    points : list[Point] = []
-    for x in range(size*2-1):
-        letter = string.ascii_uppercase[x]
-        for y in grid[letter]:
-            points.append(Point(letter, y))
-    return points
 
 def get_move(graph: dict[Point, Node]) -> tuple[str, int, bool]:
     try:
-        letter, number = input('Field: ').split(" ")
-        node = graph[Point(L = letter, N = int(number))]
+        move = input('Field: ').replace(" ", "")
+        if len(move) != 2:
+            raise(Exception)
+        letter, number = move[0].upper(), int(move[1])
+        node = graph[Point(letter, number)]
         if node.symbol != str(Color.White.value):
             raise(Exception)
-        else:
-            return letter, int(number), True
-    except Exception as e:
+        return letter, int(number), True
+    except Exception:
         return '', 0, False
 
-def get_size() -> int:
+def get_size(prompt: str) -> int:
     try:
-        size = int(input("Enter size: "))
+        size = int(input(prompt))
         return size
-    except Exception as e:
+    except Exception:
         return -1
 
+def get_yn(prompt: str) -> bool:
+    yn = input(prompt).lower()
+    if yn == "n" or yn == "no":
+        return False
+    return True
 
 if __name__ == "__main__":
+    size = get_size("Enter size: ")
+    valid_sizes = [5, 7, 9]
+    while size not in valid_sizes:
+        size = get_size(f"Wrong size! (Avalable {valid_sizes}):\nEnter size: ")
 
-    size = get_size()
-    while size not in [5, 7, 9]:
-        size = int(input("Wrong size! Enter size: "))
+    computer_opponent: bool = get_yn("Do you want to play againts a computer? [Y/n]")
+    player_one_first: bool = get_yn("Should player one go first? [Y/n]")
 
-    hex_points = generate_points(size, build_grid(size))
-    graph = build_graph(hex_points)
 
-    #printer.debug(graph)
-    #printer.graph(graph, size)
+    graph = create_starting_graph(size)
+    # printer.debug(graph)
 
-    for turn in range(1, 999):
-        if (turn % 2 == 1): player = Color.Green
+    for turn in range(0, 999):
+        if ((turn + int(player_one_first)) % 2 == 1): player = Color.Green
         else: player = Color.Red
 
         print(f"Turn: {turn}")
         printer.graph(graph, size)
         print(f"Turn for {player.value}: ")
 
-
         letter, number, good_move = get_move(graph)
         while not good_move:
             print('Wrong move!', end= ' ')
             letter, number, good_move = get_move(graph)
 
-        graph[Point(L=letter, N=int(number))].symbol = str(player.value)
+        graph[Point(letter, number)].symbol = str(player.value)
