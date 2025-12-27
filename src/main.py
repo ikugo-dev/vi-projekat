@@ -1,5 +1,7 @@
 import string
 
+from numpy.f2py.auxfuncs import throw_error
+
 from data_types import Color, Point, Node
 import printer
 
@@ -55,10 +57,30 @@ def generate_points(size: int, grid: dict[str, list[int]]) -> list[Point]:
             points.append(Point(letter, y))
     return points
 
+def get_move(graph: dict[Point, Node]) -> tuple[str, int, bool]:
+    try:
+        letter, number = input('Field: ').split(" ")
+        node = graph[Point(L = letter, N = int(number))]
+        if node.symbol != str(Color.White.value):
+            raise(Exception)
+        else:
+            return letter, int(number), True
+    except Exception as e:
+        return '', 0, False
+
+def get_size() -> int:
+    try:
+        size = int(input("Enter size: "))
+        return size
+    except Exception as e:
+        return -1
 
 
 if __name__ == "__main__":
-    size = int(input("Enter size: "))
+
+    size = get_size()
+    while size not in [5, 7, 9]:
+        size = int(input("Wrong size! Enter size: "))
 
     hex_points = generate_points(size, build_grid(size))
     graph = build_graph(hex_points)
@@ -74,6 +96,10 @@ if __name__ == "__main__":
         printer.graph(graph, size)
         print(f"Turn for {player.value}: ")
 
-        letter, number = input('Field: ').split(" ")
-        node = graph[Point(L=letter, N=int(number))]
-        node.symbol = player.value
+
+        letter, number, good_move = get_move(graph)
+        while not good_move:
+            print('Wrong move!', end= ' ')
+            letter, number, good_move = get_move(graph)
+
+        graph[Point(L=letter, N=int(number))].symbol = str(player.value)
