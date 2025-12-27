@@ -1,10 +1,13 @@
 # Atol - VI projekat
 
 Projekat iz predmeta Veštačka inteligencija
+
 Tim:
 - Marko Petrović (19317) 
 - Aleksandar Ristić (19340)
 - Nina Paunović (19515)
+
+<img src="documentation/example.png" alt="terminal screenshot" width="500"/>
 
 Trenutna faza:
 - [x] 1
