@@ -1,25 +1,16 @@
 import string
 from data_types import Color, Point, Node
 
-def graph(graph: dict[Point, Node], size: int) -> None:
-    islands : list[Color] = [ ]
 
-    for _ in range(size // 2): islands.append(Color.Red)
-    for _ in range(size // 2): islands.append(Color.Green)
-
-    columns = size * 2 - 1
-
-    ##########Tackice############
-
-    table_matrix : list[list[str]] = [] 
-    table_y_offset = size - 3
-    table_matrix_height = size * 4 - 3
+def create_table(graph: dict[Point, Node]) -> list[list[str]]:
+    table : list[list[str]] = [] 
+    table_height = size * 4 - 3
 
     #Popuni praznim
-    for row in range(table_matrix_height):
-        table_matrix.append([])
+    for row in range(table_height):
+        table.append([])
         for col in range(columns):
-            table_matrix[-1].append('  ')
+            table[-1].append('  ')
 
     #Popuni tackicama
     for col in range(columns):
@@ -32,24 +23,28 @@ def graph(graph: dict[Point, Node], size: int) -> None:
         for number in rng:
             table_y = number * 2 + table_y_offset - col
             node = graph[Point(letter, number)]
-            table_matrix[table_y][col] = node.symbol
+            table[table_y][col] = node.symbol
+    return table
 
+def create_island_table(table: list[list[str]]) -> list[list[str]]:
+    islands : list[Color] = [ ]
 
-    ##########Ostrva############
+    for _ in range(size // 2): islands.append(Color.Red)
+    for _ in range(size // 2): islands.append(Color.Green)
 
-    isl_columns = size * 2 + 2
-    isl_table_matrix_height = size * 4 - 1
-    isl_table_matrix : list[list[str]] = [] 
+    island_columns = size * 2 + 2
+    island_table_height = size * 4 - 1
+    island_table : list[list[str]] = [] 
 
-    for row in range(isl_table_matrix_height):
-        isl_table_matrix.append([])
-        for col in range(isl_columns):
-            isl_table_matrix[-1].append('  ')
+    for row in range(island_table_height):
+        island_table.append([])
+        for col in range(island_columns):
+            island_table[-1].append('  ')
 
     #Inject matrix 
-    for row in range(table_matrix_height):
+    for row in range(table_height):
         for col in range(columns):
-            isl_table_matrix[row+1][col+1] = table_matrix[row][col]
+            island_table[row+1][col+1] = table[row][col]
 
     side_x = size ; side_y = -1
 
@@ -66,50 +61,67 @@ def graph(graph: dict[Point, Node], size: int) -> None:
     for side in range(6):
         for island in islands:
             side_y, side_x = inc_side(side, side_y, side_x)
-            isl_table_matrix[side_y][side_x] = island.value
+            island_table[side_y][side_x] = island.value
 
         side_y, side_x = inc_side(side, side_y, side_x)
+    return island_table
 
+def create_legend_table(island_table: list[list[str]]) -> tuple[list[list[str]], int, int]:
+    island_columns = size * 2 + 2
+    island_table_height = size * 4 - 1
 
-    ###########Legenda###########
+    legend_columns = island_columns + 2
+    legend_table_height = island_table_height + 4
+    legend_table : list[list[str]] = []
 
-    leg_columns = isl_columns + 2
-    leg_table_matrix_height = size * 4 + 3
-    leg_table_matrix : list[list[str]] = []
-
-    for row in range(leg_table_matrix_height):
-        leg_table_matrix.append([])
-        for col in range(leg_columns):
-            leg_table_matrix[-1].append('  ')
-
-    #Inject matrix 
-    for row in range(isl_table_matrix_height):
-        for col in range(isl_columns):
-            leg_table_matrix[row+2][col+1] = isl_table_matrix[row][col]
+    for row in range(legend_table_height):
+        legend_table.append([])
+        for col in range(legend_columns):
+            legend_table[-1].append('  ')
 
 
     for col in range(columns):
         letter = string.ascii_uppercase[col]
-        leg_table_matrix[0][col + 2] = f"{letter} "
-        leg_table_matrix[leg_table_matrix_height - 1][col + 2] = f"{letter} "
+        legend_table[0][col + 2] = f"{letter} "
+        legend_table[legend_table_height - 1][col + 2] = f"{letter} "
 
     #Levi brojevi
     for num in range(1, size + 1):
-        leg_table_matrix[num * 2 + table_y_offset + 5][0] = f"{num} "
+        legend_table[num * 2 + table_y_offset + 5][0] = f"{num} "
 
     #Desni brojevi
     for num in range(size, columns + 1):
-        leg_table_matrix[num * 2 + table_y_offset + 2 - (size * 2 - 1)][leg_columns - 1] = f"{num} "
+        legend_table[num * 2 + table_y_offset + 2 - (size * 2 - 1)][legend_columns - 1] = f"{num} "
 
-    #Printuj legendu
-    for row in range(leg_table_matrix_height):
-        for col in range(leg_columns):
-            print(leg_table_matrix[row][col], end = " ")
+    #Inject matrix 
+    for row in range(island_table_height):
+        for col in range(island_columns):
+            legend_table[row+2][col+1] = island_table[row][col]
+    return legend_table, legend_columns, legend_table_height
+
+def print_graph(graph: dict[Point, Node], graph_size: int) -> None:
+    global size
+    global table_y_offset
+    global columns
+    global table_height
+    size = graph_size
+    table_y_offset = size - 3
+    columns = size * 2 - 1
+    table_height = size * 4 - 3
+
+    table = create_table(graph)
+    island_table = create_island_table(table)
+    legend_table, width, height = create_legend_table(island_table)
+
+    #Printuj celu tablu
+    for row in range(height):
+        for col in range(width):
+            print(legend_table[row][col], end = " ")
         print("")
 
-def debug(graph: dict[Point, Node]) -> None:
-    for point, node in graph.items():
-        print(f"{point}: {node}")
-        for neighbour in node.neighbours:
-            print(f"-> {neighbour.point}, ")
-        print("\n")
+# def debug(graph: dict[Point, Node]) -> None:
+#     for point, node in graph.items():
+#         print(f"{point}: {node}")
+#         for neighbour in node.neighbours:
+#             print(f"-> {neighbour}, ")
+#         print("\n")

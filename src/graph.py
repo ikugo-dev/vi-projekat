@@ -25,11 +25,18 @@ def build_grid(size: int) -> dict[str, list[int]]:
         #print(grid)
     return grid
 
+def generate_points(size: int, grid: dict[str, list[int]]) -> list[Point]:
+    points : list[Point] = []
+    for x in range(size*2-1):
+        letter = string.ascii_uppercase[x]
+        for y in grid[letter]:
+            points.append(Point(letter, y))
+    return points
+
 def build_graph(points: list[Point]) -> dict[Point, Node]:
     nodes : dict[Point, Node] = {}
     for point in points:
         nodes[point] = Node()
-        nodes[point].point = point
 
     for point, node in nodes.items():
         for dir in HEX_DIRECTIONS:
@@ -41,13 +48,6 @@ def build_graph(points: list[Point]) -> dict[Point, Node]:
                 node.neighbours.append(nodes[neighbor_point])
     return nodes
 
-def generate_points(size: int, grid: dict[str, list[int]]) -> list[Point]:
-    points : list[Point] = []
-    for x in range(size*2-1):
-        letter = string.ascii_uppercase[x]
-        for y in grid[letter]:
-            points.append(Point(letter, y))
-    return points
 
 def create_starting_graph(size: int) ->  dict[Point, Node]:
     grid = build_grid(size)

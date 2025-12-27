@@ -1,6 +1,6 @@
 from data_types import Color, Point, Node
 from graph import create_starting_graph 
-import printer
+from printer import print_graph
 
 def get_move(graph: dict[Point, Node]) -> tuple[str, int, bool]:
     try:
@@ -33,20 +33,17 @@ if __name__ == "__main__":
     valid_sizes = [5, 7, 9]
     while size not in valid_sizes:
         size = get_size(f"Wrong size! (Avalable {valid_sizes}):\nEnter size: ")
+    graph = create_starting_graph(size)
 
     computer_opponent: bool = get_yn("Do you want to play againts a computer? [Y/n]")
     player_one_first: bool = get_yn("Should player one go first? [Y/n]")
-
-
-    graph = create_starting_graph(size)
-    # printer.debug(graph)
 
     for turn in range(0, 999):
         if ((turn + int(player_one_first)) % 2 == 1): player = Color.Green
         else: player = Color.Red
 
         print(f"Turn: {turn}")
-        printer.graph(graph, size)
+        print_graph(graph, size)
         print(f"Turn for {player.value}: ")
 
         letter, number, good_move = get_move(graph)
