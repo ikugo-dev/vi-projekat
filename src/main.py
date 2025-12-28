@@ -5,9 +5,9 @@ from printer import print_graph
 def get_move(graph: dict[Point, Node]) -> tuple[str, int, bool]:
     try:
         move = input('Field: ').replace(" ", "")
-        if len(move) != 2:
+        if len(move) < 2:
             raise(Exception)
-        letter, number = move[0].upper(), int(move[1])
+        letter, number = move[0].upper(), int(move[1:])
         node = graph[Point(letter, number)]
         if node.symbol != str(Color.White.value):
             raise(Exception)
