@@ -90,15 +90,33 @@ def get_red_island_points(size: int) -> list[list[Point]]:
 
     return [ center_left, top_left, bottom_left, top_right, bottom_right, center_right]
 
+def opposite_sides(island_points: list[list[Point]], side_index: int) -> list[list[Point]]:
+    opposite_indices = [
+        (side_index + 2) % 6,
+        (side_index + 3) % 6,
+        (side_index + 4) % 6,
+    ]
+    return [island_points[i] for i in opposite_indices]
+
+def has_winning_bridges(graph: dict[Point, Node], color : Color, island_points: list[list[Point]]) -> bool:
+    for i, island1 in enumerate(island_points):
+        for island2 in opposite_sides(island_points, i):
+            for p1 in island1:
+                for p2 in island2:
+                    node1, node2 = graph[p1], graph[p2]
+
+                    if node1.symbol != color.value: continue 
+                    if node1.symbol != node2.symbol: continue
+                    if not has_path_same_color(node1, node2): continue
+                    return True # minimalna duzina za most sa susedne strane je sama po sebi 7
+    return False
+
 def bridges_for_color(graph: dict[Point, Node], color : Color, island_points: list[list[Point]]):
     results : list[tuple[Point, Point]] = []
-    
-
     for i in range(len(island_points)):
         island1 = island_points[i]
         for j in range(i + 1, len(island_points)):
             island2 = island_points[j]
-
             for p1 in island1:
                 for p2 in island2:
                     node1, node2 = graph[p1], graph[p2]
@@ -108,5 +126,4 @@ def bridges_for_color(graph: dict[Point, Node], color : Color, island_points: li
                     if not has_path_same_color(node1, node2): continue
 
                     results.append((p1, p2))
-                        
     return results

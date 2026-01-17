@@ -1,10 +1,9 @@
-#from curses import has_colors
-from bridges import bridges_for_color, get_green_island_points, get_red_island_points
+from bridges import bridges_for_color, get_green_island_points, get_red_island_points, has_winning_bridges
 from data_types import Color, Point, Node
 from graph import create_starting_graph 
-from moves import get_available_moves
+# from moves import get_available_moves
 from printer import print_graph
-from states import set_new_state, get_new_states
+from states import set_new_state
 
 def get_move(graph: dict[Point, Node]) -> tuple[str, int, bool]:
     try:
@@ -43,11 +42,9 @@ if __name__ == "__main__":
     player_one_first: bool = get_yn("Should player one go first? [Y/n]")
 
     green_island_points = get_green_island_points(size)
-    print('Green island points')
-    print(green_island_points)
-    print('Red island points')
     red_island_points = get_red_island_points(size)
-    print(get_red_island_points(size))
+    # print(f'Green island points {green_island_points}')
+    # print(f'Red island points {red_island_points}')
 
     for turn in range(0, 999):
         if ((turn + int(player_one_first)) % 2 == 1): player = Color.Green
@@ -62,17 +59,16 @@ if __name__ == "__main__":
             print('Wrong move!', end= ' ')
             letter, number, good_move = get_move(graph)
 
-        set_new_state(graph, letter, number, player)
+        graph = set_new_state(graph, letter, number, player)
 
         if (player == Color.Green):
             island_points = green_island_points
         else:
             island_points = red_island_points
 
-        bridges = bridges_for_color(graph, player, island_points)
-
-        if (bridges):
-            print(f"Player {player.value} has bridges: {bridges}")
+        if (has_winning_bridges(graph, player, island_points)):
+            print(f"Player {player.value} has a winning bridge !!!")
+            break
 
 
         #moves = get_available_moves(graph)

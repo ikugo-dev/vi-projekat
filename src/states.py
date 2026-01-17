@@ -17,5 +17,5 @@ def get_new_states(graph: dict[Point, Node], player: Color) -> list[dict[Point, 
         set_new_state(possible_graph, point.letter, point.number, player)
         new_states.append(possible_graph)
 
-    return new_states if new_states!=[] else None
+    return new_states if new_states!=[] else []
 
