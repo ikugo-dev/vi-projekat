@@ -1,9 +1,10 @@
-from curses import has_colors
+#from curses import has_colors
 from bridges import bridges_for_color, get_green_island_points, get_red_island_points
 from data_types import Color, Point, Node
 from graph import create_starting_graph 
 from moves import get_available_moves
 from printer import print_graph
+from states import set_new_state, get_new_states
 
 def get_move(graph: dict[Point, Node]) -> tuple[str, int, bool]:
     try:
@@ -61,7 +62,7 @@ if __name__ == "__main__":
             print('Wrong move!', end= ' ')
             letter, number, good_move = get_move(graph)
 
-        graph[Point(letter, number)].symbol = str(player.value)
+        set_new_state(graph, letter, number, player)
 
         if (player == Color.Green):
             island_points = green_island_points
@@ -73,5 +74,14 @@ if __name__ == "__main__":
         if (bridges):
             print(f"Player {player.value} has bridges: {bridges}")
 
+
         #moves = get_available_moves(graph)
         #print(f"Available moves {moves} ")
+
+        # if ((turn + int(player_one_first)) % 2 == 1):
+        #     other_player = Color.Red
+        # else:
+        #     other_player = Color.Green
+        # states = get_new_states(graph, other_player)
+        # for state in states:
+        #     print_graph(state, size)
