@@ -12,6 +12,9 @@ class Point:
     number: int
 
 class Node:
+    def has_value(self) -> bool:
+        return self.symbol != Color.White.value
+
     def __init__(self):
         self.neighbours: list[Node] = []
         self.symbol: str = Color.White.value
