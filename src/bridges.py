@@ -55,7 +55,7 @@ def get_green_island_points(size: int) -> list[list[Point]]:
         last_letter = string.ascii_uppercase[size * 2 - 2]
         center_right.append(Point(last_letter, i))
 
-    return [ center_left, top_left, bottom_left, top_right, bottom_right, center_right]
+    return [ center_left, top_left, top_right, center_right, bottom_right, bottom_left]
     
 def get_red_island_points(size: int) -> list[list[Point]]:
 
@@ -88,7 +88,7 @@ def get_red_island_points(size: int) -> list[list[Point]]:
         last_letter = string.ascii_uppercase[size * 2 - 2]
         center_right.append(Point(last_letter, i))
 
-    return [ center_left, top_left, bottom_left, top_right, bottom_right, center_right]
+    return [ center_left, top_left, top_right, center_right, bottom_right, bottom_left]
 
 def opposite_sides(island_points: list[list[Point]], side_index: int) -> list[list[Point]]:
     opposite_indices = [

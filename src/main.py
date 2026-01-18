@@ -68,6 +68,7 @@ if __name__ == "__main__":
 
         if (has_winning_bridges(graph, player, island_points)):
             print(f"Player {player.value} has a winning bridge !!!")
+            print_graph(graph, size)
             break
 
 
