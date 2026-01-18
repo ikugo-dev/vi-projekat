@@ -98,17 +98,37 @@ def opposite_sides(island_points: list[list[Point]], side_index: int) -> list[li
     ]
     return [island_points[i] for i in opposite_indices]
 
-def has_winning_bridges(graph: dict[Point, Node], color : Color, island_points: list[list[Point]]) -> bool:
-    for i, island1 in enumerate(island_points):
-        for island2 in opposite_sides(island_points, i):
-            for p1 in island1:
-                for p2 in island2:
-                    node1, node2 = graph[p1], graph[p2]
+def has_winning_bridges(
+    graph: dict[Point, Node],
+    color : Color,
+    island_points: list[list[Point]],
+) -> bool:
 
-                    if node1.symbol != color.value: continue 
-                    if node1.symbol != node2.symbol: continue
-                    if not has_path_same_color(node1, node2): continue
-                    return True # minimalna duzina za most sa susedne strane je sama po sebi 7
+    def are_islands_connected(island1: list[Point], island2: list[Point]) -> bool:
+        for p1 in island1:
+            for p2 in island2:
+                node1, node2 = graph[p1], graph[p2]
+
+                if node1.symbol != color.value: continue 
+                if node1.symbol != node2.symbol: continue
+                if not has_path_same_color(node1, node2): continue
+                return True # minimalna duzina za most sa susedne strane je sama po sebi 7
+        return False 
+
+    for i, island in enumerate(island_points):
+        #Win case 1: Opposing island
+        opp_island = island_points[(i + 3) % 6]
+        if (are_islands_connected(island, opp_island)): return True
+
+        #Win case 2: Both of the sides of the opposing island
+        opp_side1 = island_points[(i + 2) % 6]
+        if not are_islands_connected(island, opp_side1): continue
+
+        opp_side2 = island_points[(i + 4) % 6]
+        if not are_islands_connected(island, opp_side2): continue 
+
+        return True
+
     return False
 
 def bridges_for_color(graph: dict[Point, Node], color : Color, island_points: list[list[Point]]):
