@@ -37,6 +37,7 @@ def build_graph(points: list[Point]) -> dict[Point, Node]:
     nodes : dict[Point, Node] = {}
     for point in points:
         nodes[point] = Node()
+        nodes[point].point = point
 
     for point, node in nodes.items():
         for dir in HEX_DIRECTIONS:

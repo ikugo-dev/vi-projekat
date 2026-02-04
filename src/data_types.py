@@ -18,4 +18,7 @@ class Node:
     def __init__(self):
         self.neighbours: list[Node] = []
         self.symbol: str = Color.White.value
-        # self.point: Point = Point("X", 0)
+        self.point: Point = Point("X", 0)
+
+
+#treba da se definisu konstante indeksi ostrva koji se koriste u kodu

@@ -3,8 +3,10 @@ from data_types import Color, Point, Node
 from graph import create_starting_graph 
 # from moves import get_available_moves
 from printer import print_graph
+from src.heuristics import get_segments, distances_from_islands
+from src.states import determine_heuristic, min_state
 from states import set_new_state
-
+import heuristics
 def get_move(graph: dict[Point, Node]) -> tuple[str, int, bool]:
     try:
         move = input('Field: ').replace(" ", "")
@@ -82,3 +84,12 @@ if __name__ == "__main__":
         # states = get_new_states(graph, other_player)
         # for state in states:
         #     print_graph(state, size)
+
+        # distances = distances_from_islands(graph, Color.Green.value, size)
+        # for distance in distances:
+        #     print(distance)
+        # print("heuristic", determine_heuristic(graph,Color.Green,size))
+
+        # min_pair = min_state(graph, Color.Green, size)
+        # print_graph(min_pair[0], size)
+        # print("min heuristic", min_pair[1])
