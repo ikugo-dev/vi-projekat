@@ -1,11 +1,9 @@
 import copy
 
-from matplotlib.pyplot import connect
-
 from data_types import Node, Point, Color
 from moves import get_available_moves
-from src.bridges import has_winning_bridges, get_green_island_points
-from src.heuristics import distances_from_islands, segment_connected_to_island
+from bridges import has_winning_bridges, get_green_island_points
+from heuristics import distances_from_islands, segment_connected_to_island
 
 
 #state = graph
@@ -30,12 +28,14 @@ def get_new_states(graph: dict[Point, Node], player: Color) -> list[dict[Point, 
 #numbers should be tweaked to encourage going forward in one direction rather than broadening in endgame
 
 def determine_heuristic(graph: dict[Point, Node], player: Color, size:int) -> int:
+
     if has_winning_bridges(graph, player, get_green_island_points(size)):
         heuristic = 0
         return heuristic
 
-
     distances = distances_from_islands(graph, player.value, size)
+    if not distances:
+        return 1000
 
     heuristics = []
     for distance in distances:
