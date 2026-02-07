@@ -98,7 +98,6 @@ def minmax_alpha_beta(
     TRANSPOSITION[key] = (best_value, best_state)
     return best_value, best_state
 
-# ---------------- API ----------------
 def find_move_difference(old_graph, new_graph):
     for point in old_graph:
         if old_graph[point].symbol != new_graph[point].symbol:

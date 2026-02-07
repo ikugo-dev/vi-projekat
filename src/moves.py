@@ -8,4 +8,3 @@ def get_available_moves(graph: dict[Point, Node]) -> list[Point]:
             available_moves.append(point)
             
     return available_moves
-           

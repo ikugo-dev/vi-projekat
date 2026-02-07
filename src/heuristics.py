@@ -1,5 +1,5 @@
 from data_types import Color, Node, Point
-from bridges import get_green_island_points, get_red_island_points
+from bridges import get_green_island_points, get_red_island_points, has_winning_bridges
 
 def distances_from_islands(graph: dict[Point, Node], color: str, size:int) -> list[dict[int, list[int]]]:
     segments = get_segments(graph, color)
@@ -132,3 +132,47 @@ def determine_distances_from_segment(islands: list[list[Point]], color: str, seg
             neighbour_segment = next_neighbour_segment
             distance += 1
     return minimal_distances
+
+#issue: too broad in endgame
+#numbers should be tweaked to encourage going forward in one direction rather than broadening in endgame
+
+def determine_heuristic(graph: dict[Point, Node], player: Color, size:int) -> int:
+    # if has_winning_bridges(graph, player, get_green_island_points(size)):
+    #     heuristic = 0
+    #     return heuristic
+
+    distances = distances_from_islands(graph, player.value, size)
+    if not distances:
+        return 1000
+
+    heuristics = []
+    for distance in distances:
+        segment_islands = distance.get(0, [])
+        if segment_islands == []:
+            heuristic = unconnected_heuristic(distance)
+        else:
+            heuristic = connected_heuristic(distance, segment_islands)
+        heuristics.append(heuristic)
+    return min(heuristics)
+
+def unconnected_heuristic(distance: dict[int, list[int]]) -> int:
+    heuristic = 0
+    for key in distance.keys():
+        heuristic += key * len(distance[key])
+    return heuristic
+
+def connected_heuristic(distance: dict[int, list[int]], segment_islands: list[int]) -> int:
+    heuristic = 0
+    for segment in segment_islands:
+        opposites = [(segment + 2) % 6, (segment + 3) % 6, (segment + 4) % 6]
+        while opposites:
+            opposite = opposites.pop()
+            found = False
+            for key in distance.keys():
+                if opposite in distance[key]:
+                    found = True
+                    heuristic += key
+            if not found:
+                heuristic += 10
+    heuristic += 6 - len(segment_islands)
+    return heuristic
