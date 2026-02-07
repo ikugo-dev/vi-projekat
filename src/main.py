@@ -3,10 +3,8 @@ from data_types import Color, Point, Node
 from graph import create_starting_graph 
 # from moves import get_available_moves
 from printer import print_graph
-from src.heuristics import get_segments, distances_from_islands
-from src.states import determine_heuristic, min_state
-from states import set_new_state
-import heuristics
+from heuristics import distances_from_islands
+from states import determine_heuristic, min_state, set_new_state
 def get_move(graph: dict[Point, Node]) -> tuple[str, int, bool]:
     try:
         move = input('Field: ').replace(" ", "")

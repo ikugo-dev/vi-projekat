@@ -1,12 +1,9 @@
 import copy
 
-from matplotlib.pyplot import connect
-
 from data_types import Node, Point, Color
 from moves import get_available_moves
-from src.bridges import has_winning_bridges, get_green_island_points
-from src.heuristics import distances_from_islands, segment_connected_to_island
-
+from bridges import has_winning_bridges, get_green_island_points
+from heuristics import distances_from_islands, segment_connected_to_island
 
 #state = graph
 def set_new_state(graph: dict[Point, Node], letter: str, number: int, player: Color) -> dict[Point, Node]:
