@@ -1,6 +1,6 @@
 import string
 
-from data_types import Point, Node
+from data_types import Node, Point
 
 HEX_DIRECTIONS = [
     (0, -1),

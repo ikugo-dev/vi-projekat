@@ -1,5 +1,6 @@
-from data_types import Color, Node, Point
-from states import determine_heuristic, get_new_states
+from data_types import Color, GameState, Point
+from heuristics import determine_heuristic_for
+from states import get_possible_future_states
 from bridges import has_winning_bridges, get_green_island_points, get_red_island_points
 
 INF = 10**9
@@ -13,58 +14,51 @@ def hash_graph(graph):
     )
 
 # ---------------- EVALUATION ----------------
-def evaluate(graph, player, opponent, size):
-    p = determine_heuristic(graph, player, size)
-    o = determine_heuristic(graph, opponent, size)
+def evaluate(state: GameState):
+    p = determine_heuristic_for(state, state.main_player)
+    o = determine_heuristic_for(state, state.opponent)
     return o - p   # vece = bolje za AI
 
 # ---------------- MINMAX ----------------
 def minmax_alpha_beta(
-    graph,
-    player,
-    opponent,
-    depth,
-    size,
-    alpha=-INF,
-    beta=INF,
-    is_maximizing=True
-):
-    # Hash state
-    key = (hash_graph(graph), depth, is_maximizing)
+    state: GameState,
+    depth: int,
+    alpha: int = -INF,
+    beta: int = INF,
+    is_maximizing: bool =True
+) -> tuple[int, GameState | None]:
+    key = (hash_graph(state.graph), depth, is_maximizing)
     if key in TRANSPOSITION:
         return TRANSPOSITION[key]
 
-    # Island points
-    if player == Color.Green:
-        player_islands = get_green_island_points(size)
-        opponent_islands = get_red_island_points(size)
+    if state.main_player == Color.Green:
+        player_islands = get_green_island_points(state.board_size)
+        opponent_islands = get_red_island_points(state.board_size)
     else:
-        player_islands = get_red_island_points(size)
-        opponent_islands = get_green_island_points(size)
+        player_islands = get_red_island_points(state.board_size)
+        opponent_islands = get_green_island_points(state.board_size)
 
     # Terminal
-    if has_winning_bridges(graph, player, player_islands):
+    if has_winning_bridges(state.graph, state.main_player, player_islands):
         return (100000, None)
 
-    if has_winning_bridges(graph, opponent, opponent_islands):
+    if has_winning_bridges(state.graph, state.opponent, opponent_islands):
         return (-100000, None)
 
     if depth == 0:
-        value = evaluate(graph, player, opponent, size)
+        value = evaluate(state)
         TRANSPOSITION[key] = (value, None)
         return value, None
 
-    current_player = player if is_maximizing else opponent
-    states = get_new_states(graph, current_player)
+    future_tates = get_possible_future_states(state)
 
-    if not states:
-        value = evaluate(graph, player, opponent, size)
+    if not future_tates:
+        value = evaluate(state)
         TRANSPOSITION[key] = (value, None)
         return value, None
 
-    # MOVE ORDERING
-    states.sort(
-        key=lambda s: evaluate(s, player, opponent, size),
+    future_tates.sort(
+        key=lambda s: evaluate(s),
         reverse=is_maximizing
     )
 
@@ -72,10 +66,8 @@ def minmax_alpha_beta(
 
     if is_maximizing:
         best_value = -INF
-        for state in states:
-            value, _ = minmax_alpha_beta(
-                state, player, opponent, depth - 1, size, alpha, beta, False
-            )
+        for state in future_tates:
+            value, _ = minmax_alpha_beta(state, depth - 1, alpha, beta, False)
             if value > best_value:
                 best_value = value
                 best_state = state
@@ -84,10 +76,8 @@ def minmax_alpha_beta(
                 break
     else:
         best_value = INF
-        for state in states:
-            value, _ = minmax_alpha_beta(
-                state, player, opponent, depth - 1, size, alpha, beta, True
-            )
+        for state in future_tates:
+            value, _ = minmax_alpha_beta(state, depth - 1, alpha, beta, True)
             if value < best_value:
                 best_value = value
                 best_state = state
@@ -98,30 +88,29 @@ def minmax_alpha_beta(
     TRANSPOSITION[key] = (best_value, best_state)
     return best_value, best_state
 
-def find_move_difference(old_graph, new_graph):
-    for point in old_graph:
-        if old_graph[point].symbol != new_graph[point].symbol:
+def find_move_difference(old_state: GameState, new_state: GameState) -> Point | None:
+    for point in old_state.graph:
+        if old_state.graph[point].symbol != new_state.graph[point].symbol:
             return point
     return None
 
-def get_best_move(graph, player, size, depth=3):
-    opponent = Color.Red if player == Color.Green else Color.Green
-    score, best_state = minmax_alpha_beta(graph, player, opponent, depth, size, True)
+def get_best_move(state:GameState, depth:int =3) -> tuple[Point | None, int]:
+    score, best_state = minmax_alpha_beta(state, depth, is_maximizing=True)
 
     if best_state is None:
         return None, score
 
-    move = find_move_difference(graph, best_state)
+    move = find_move_difference(state, best_state)
     return move, score
 
-def get_computer_move(graph, player, size, depth=3, verbose=True):
-    move, score = get_best_move(graph, player, size, depth)
+def get_computer_move(state: GameState, depth=3, verbose=True) -> Point:
+    move, score = get_best_move(state, depth)
 
     if move is None:
         from moves import get_available_moves
-        move = get_available_moves(graph)[0]
+        move = get_available_moves(state.graph)[0]
 
     if verbose:
-        print(f"Računar igra: {move.letter}{move.number}  |  score = {score}")
+        print(f"Computer plays: {move.letter}{move.number} | score = {score}")
 
-    return move.letter, move.number
+    return move

@@ -1,26 +1,39 @@
 import copy
 
-from data_types import Node, Point, Color
+from data_types import Color, GameState, Node, Point
+from graph import create_starting_graph
 from moves import get_available_moves
-from heuristics import determine_heuristic
 
-#state = graph
-def set_new_state(graph: dict[Point, Node], point: Point, player: Color) -> None:
-    graph[point].symbol = str(player.value)
+def set_new_state(old_state: GameState, point: Point) -> None:
+    old_state.graph[point].symbol = str(old_state.current_player.value)
 # def set_new_state(graph: dict[Point, Node], letter: str, number: int, player: Color) -> dict[Point, Node]:
 #     graph[Point(letter, number)].symbol = str(player.value)
 #     return graph
 
-def get_new_states(graph: dict[Point, Node], player: Color) -> list[dict[Point, Node]]:
-    available_moves = get_available_moves(graph)
+def get_possible_future_states(old_state: GameState) -> list[GameState]:
+    available_moves = get_available_moves(old_state.graph)
 
-    new_states = []
+    new_states: list[GameState] = []
     for point in available_moves:
-        possible_graph = copy.deepcopy(graph)
-        set_new_state(possible_graph, point, player)
-        new_states.append(possible_graph)
+        possible_state = copy_state(old_state)
+        set_new_state(possible_state, point)
+        new_states.append(possible_state)
 
-    return new_states if new_states!=[] else []
+    return new_states
+
+def copy_state(state: GameState) -> GameState:
+    new_nodes: dict[Point, Node] = {}
+    for point, node in state.graph.items():
+        new_nodes[point] = Node(node.symbol, point)
+
+    for point, node in state.graph.items():
+        new_nodes[point].neighbours = [new_nodes[n.point] for n in node.neighbours]
+
+    return GameState(new_nodes, state.board_size, state.current_player)
+
+def create_starting_state(player_one_first: bool, size: int) -> GameState:
+    return GameState(create_starting_graph(size), size, Color.Green if player_one_first else Color.Red)
+
 
 # def min_state(graph: dict[Point, Node], player: Color, size:int) -> tuple[dict[Point, Node], int]:
 #     state_heur_pairs = []

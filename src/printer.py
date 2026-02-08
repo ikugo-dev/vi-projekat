@@ -1,5 +1,5 @@
 import string
-from data_types import Color, Point, Node
+from data_types import Color, GameState, Point, Node
 
 
 def create_table(graph: dict[Point, Node]) -> list[list[str]]:
@@ -99,17 +99,17 @@ def create_legend_table(island_table: list[list[str]]) -> tuple[list[list[str]],
             legend_table[row+2][col+1] = island_table[row][col]
     return legend_table, legend_columns, legend_table_height
 
-def print_graph(graph: dict[Point, Node], graph_size: int) -> None:
+def print_state(state: GameState) -> None:
     global size
     global table_y_offset
     global columns
     global table_height
-    size = graph_size
+    size = state.board_size
     table_y_offset = size - 3
     columns = size * 2 - 1
     table_height = size * 4 - 3
 
-    table = create_table(graph)
+    table = create_table(state.graph)
     island_table = create_island_table(table)
     legend_table, width, height = create_legend_table(island_table)
 

@@ -1,54 +1,56 @@
-from data_types import Color, Node, Point
-from bridges import get_green_island_points, get_red_island_points, has_winning_bridges
+from data_types import Color, GameState, Node, Point
+from bridges import get_green_island_points, get_red_island_points
 
-def distances_from_islands(graph: dict[Point, Node], color: str, size:int) -> list[dict[int, list[int]]]:
-    segments = get_segments(graph, color)
+def distances_from_islands(state: GameState, player: Color) -> list[dict[int, list[int]]]:
+    segments = get_segments(state, player)
 
-    if color == Color.Red.value:
-        islands = get_red_island_points(size)
-    elif color == Color.Green.value:
-        islands = get_green_island_points(size)
-    else: return []
+    islands = get_islands_for(player, state.board_size)
 
-    distances, _ = init_distances_from_segments(islands, color, segments)
+    distances, _ = init_distances_from_segments(islands, player.value, segments)
     return distances
 
-def minimal_distances_from_islands(graph: dict[Point, Node], color: str, size:int) -> list[dict[int, int]]:
-    segments = get_segments(graph, color)
+def get_islands_for(player: Color, board_size: int) -> list[list[Point]]:
+    islands :list[list[Point]]
+    if player == Color.Red:
+        islands = get_red_island_points(board_size)
+    else:
+        islands = get_green_island_points(board_size)
+    return [list(island) for island in islands]
 
-    if color == Color.Red.value:
-        islands = get_red_island_points(size)
-    elif color == Color.Green.value:
-        islands = get_green_island_points(size)
-    else: return []
+def minimal_distances_from_islands(state: GameState, player: Color) -> list[dict[int, int]]:
+    segments = get_segments(state, player)
 
-    distances, minimal_distances = init_distances_from_segments(islands, color, segments)
-    minimal_distances = determine_distances_from_segment(islands, color, segments, distances, minimal_distances)
+    islands = get_islands_for(player, state.board_size)
+
+    distances, minimal_distances = init_distances_from_segments(islands, player.value, segments)
+    minimal_distances = determine_distances_from_segment(islands, player.value, segments, distances, minimal_distances)
 
     return minimal_distances
 
-def get_segments(graph: dict[Point, Node], color:str) -> list[list[Node]]:
-    segments = []
-    visited = set()
-
-    for point in graph:
-        node = graph[point]
-        if node in visited:
+def get_segments(state: GameState, player: Color) -> list[list[Node]]:
+    segments: list[list[Node]] = []
+    visited: set[Point] = set()
+    for point, node in state.graph.items():
+        if point in visited:
             continue
-        if node.symbol == color:
-            segment = [node]
-            stack = [node]
-            while stack:
-                current = stack.pop()
-                for neighbor in current.neighbours:
-                    if neighbor in visited:
-                        continue
-                    if neighbor.symbol == color:
-                        stack.append(neighbor)
-                        segment.append(neighbor)
-                visited.add(current)
-            segments.append(segment)
+        if node.symbol != player:
+            continue
 
+        segment: list[Node] = []
+        stack: list[Node] = [node]
+        visited.add(point)
+        while stack:
+            current = stack.pop()
+            segment.append(current)
+
+            for neighbour in current.neighbours:
+                neighbour_point = neighbour.point
+                if neighbour_point in visited:
+                    continue
+                if neighbour.symbol == player:
+                    visited.add(neighbour_point)
+                    stack.append(neighbour)
+        segments.append(segment)
     return segments
 
 def segment_connected_to_island(segment: list[Node], island: list[Point], color:str) -> bool:
@@ -136,12 +138,12 @@ def determine_distances_from_segment(islands: list[list[Point]], color: str, seg
 #issue: too broad in endgame
 #numbers should be tweaked to encourage going forward in one direction rather than broadening in endgame
 
-def determine_heuristic(graph: dict[Point, Node], player: Color, size:int) -> int:
+def determine_heuristic_for(state: GameState, player: Color) -> int:
     # if has_winning_bridges(graph, player, get_green_island_points(size)):
     #     heuristic = 0
     #     return heuristic
 
-    distances = distances_from_islands(graph, player.value, size)
+    distances = distances_from_islands(state, player)
     if not distances:
         return 1000
 
