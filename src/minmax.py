@@ -4,8 +4,6 @@ from states import get_possible_future_states
 from bridges import has_winning_bridges, get_green_island_points, get_red_island_points
 
 INF = 10**9
-
-# ---------------- TRANSPOSITION TABLE ----------------
 TRANSPOSITION = {}
 
 def hash_graph(graph):
@@ -13,13 +11,11 @@ def hash_graph(graph):
         graph[p].symbol for p in sorted(graph.keys(), key=lambda p:(p.letter, p.number))
     )
 
-# ---------------- EVALUATION ----------------
 def evaluate(state: GameState):
     p = determine_heuristic_for(state, state.main_player)
     o = determine_heuristic_for(state, state.opponent)
     return o - p   # vece = bolje za AI
 
-# ---------------- MINMAX ----------------
 def minmax_alpha_beta(
     state: GameState,
     depth: int,

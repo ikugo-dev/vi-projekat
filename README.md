@@ -12,11 +12,11 @@ Tim:
 Trenutna faza:
 - [x] 1
 - [x] 2
-- [ ] 3
+- [x] 3
 
 ## Dokumentacija
 
-- [Faza 2](https://github.com/ikugo-dev/vi-projekat/blob/main/documentation/F2.pdf)
+- [Faza 3](https://github.com/ikugo-dev/vi-projekat/blob/main/documentation/F3.pdf)
 
 ## Instalacija
 

@@ -1,6 +1,5 @@
 from bridges import get_green_island_points, get_red_island_points, has_winning_bridges
 from data_types import Color, Point, Node
-# from moves import get_available_moves
 from minmax import get_computer_move
 from printer import print_state
 from heuristics import determine_heuristic_for
@@ -95,8 +94,6 @@ if __name__ == "__main__":
             print(f"{'='*50}\n")
             print_state(state)
             break
-
-        # moves = get_available_moves(graph)
 
         # Prikaz heuristike za oba igraca na svakih 5 poteza
         if state.turn % 5 == 0:
