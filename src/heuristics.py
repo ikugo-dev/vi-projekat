@@ -6,7 +6,8 @@ def distances_from_islands(state: GameState, player: Color) -> list[dict[int, li
 
     islands = get_islands_for(player, state.board_size)
 
-    distances, _ = init_distances_from_segments(islands, player.value, segments)
+    distances, minimal_distances = init_distances_from_segments(islands, player.value, segments)
+    determine_distances_from_segment(islands, player.value, segments, distances, minimal_distances)
     return distances
 
 def get_islands_for(player: Color, board_size: int) -> list[list[Point]]:
@@ -33,7 +34,7 @@ def get_segments(state: GameState, player: Color) -> list[list[Node]]:
     for point, node in state.graph.items():
         if point in visited:
             continue
-        if node.symbol != player:
+        if node.symbol != player.value:
             continue
 
         segment: list[Node] = []

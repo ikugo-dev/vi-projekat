@@ -36,10 +36,10 @@ def minmax_alpha_beta(
 
     # Terminal
     if has_winning_bridges(state.graph, state.main_player, player_islands):
-        return (100000, None)
+        return (-100000, None)
 
     if has_winning_bridges(state.graph, state.opponent, opponent_islands):
-        return (-100000, None)
+        return (100000, None)
 
     if depth == 0:
         value = evaluate(state)
